@@ -9,10 +9,6 @@ def is_safe(row):
     row_check_dec.sort(reverse=True)
     row_check_inc.sort()
 
-    print(row)
-    print(row_check_dec)
-    print(row_check_inc)
-
     if row != row_check_dec and row != row_check_inc:
         return 0
     
