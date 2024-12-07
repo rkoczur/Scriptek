@@ -42,7 +42,7 @@ for line in lines:
 print(result_one)
 
 #SUM ONLY OCCURENCES AFTER DO()
-concatenated = string()
+concatenated = str()
 for line in lines:
     concatenated = concatenated + line
 result_two += get_sumof_do_muls(concatenated)
