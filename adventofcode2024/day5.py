@@ -54,7 +54,6 @@ def correct_update(update):
 #CHECK IF UPDATE IS VALID AND GET SUM CENTER VALUES
 for update in updates:
         if valid(update):
-            print(update)
             counter_valid += middle(update)
         else:
             counter_corrected += middle(correct_update(update))
