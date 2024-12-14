@@ -4,9 +4,10 @@
 # -------------------------- #
 
 the_room = list()
-current_pos_x = int()
-current_pos_y = int()
+current_pos = [int(),int()]
+places_of_guard = list()
 counter = 0
+starting_pos = list()
 
 #DIRECTIONS: 0-up, 1-right, 2-down, 3-left
 current_direction = 0
@@ -15,22 +16,23 @@ input_data = open('adventofcode2024/day6.txt', 'r')
 lines = input_data.readlines()
 for line in lines:
     the_room.append(list(line.replace('\n','')))
+input_data.close()
 
 # -------------------------- #
 #         FUNCTIONS          #
 # -------------------------- #
 
 #RETURN THE NEXT PLACE COORDINATES ACCORDING TO DIRECTION
-def get_next_place(current_pos_x,current_pos_y):
-    next_place = [current_pos_x,current_pos_y]
+def get_next_place(current_pos):
+    next_place = [current_pos[0],current_pos[1]]
     if current_direction == 0:
-        next_place = [current_pos_x,current_pos_y-1]
+        next_place[1] = next_place[1]-1
     elif current_direction == 1:
-        next_place = [current_pos_x+1,current_pos_y]
+        next_place[0] = next_place[0]+1
     elif current_direction == 2:
-        next_place = [current_pos_x,current_pos_y+1]
+        next_place[1] = next_place[1]+1
     elif current_direction == 3:
-        next_place = [current_pos_x-1,current_pos_y]
+        next_place[0] = next_place[0]-1
     return next_place
 
 #CHANGE THE CURRENT DIRECTION
@@ -49,33 +51,76 @@ def is_inside(x,y):
     if y < 0: return False
     return True
 
-#GET STARTING POSITION
-for y, row in enumerate(the_room):
-    for x, pos in enumerate(row):
-        if pos == '^': 
-            current_pos_x = x
-            current_pos_y = y
+def in_move_list(move_list):
+    for move in move_list:
+            if move[0] == current_pos[0] and move[1] == current_pos[1] and move[2] == current_direction:
+                return True
+    return False
+
+def move_string(x,y,direction):
+    return str(x)+','+str(y)+','+str(direction)
+
+def pos_string(x,y):
+    return str(x)+','+str(y)
 
 # -------------------------- #
 #           MAIN             #
 # -------------------------- #
 
+#GET STARTING POSITION
+for y, row in enumerate(the_room):
+    for x, pos in enumerate(row):
+        if pos == '^': 
+            current_pos[0]=x
+            current_pos[1]=y
+            starting_pos = current_pos.copy()
+
+#DO THE WALK
 while True:
-    next_place = get_next_place(current_pos_x,current_pos_y)
-    next_place_x = next_place[0]
-    next_place_y = next_place[1]
-    if not is_inside(next_place_x,next_place_y):
-        the_room[current_pos_y][current_pos_x] = 'X'
+    next_place = get_next_place(current_pos)
+    if not is_inside(next_place[0],next_place[1]):
+        if current_pos not in places_of_guard: places_of_guard.append(current_pos.copy())
         break
-    if the_room[next_place_y][next_place_x] == '#':
+    if the_room[next_place[1]][next_place[0]] == '#':
         current_direction = change_direction(current_direction)
     else:
-        the_room[current_pos_y][current_pos_x] = 'X'
-        current_pos_x = next_place_x
-        current_pos_y = next_place_y
+        if current_pos not in places_of_guard: places_of_guard.append(current_pos.copy())
+        current_pos[0] = next_place[0]
+        current_pos[1] = next_place[1]
 
-for row in the_room:
-    for col in row:
-        if col == 'X': counter +=1
+print(len(places_of_guard))
 
-print(counter)
+#TRY LOOPING
+loop_positions = []
+map_to_check = []
+
+for index, place in enumerate(places_of_guard):
+    print(place)
+    if index==0:continue
+    current_direction = 0
+    current_pos = starting_pos.copy()
+    move_list = set()
+    map_to_check = []
+    for line in lines:
+        map_to_check.append(list(line.replace('\n','')))
+    map_to_check[place[1]][place[0]] = '#'
+    new_places_of_guard = set()
+
+    while True:
+        next_place = get_next_place(current_pos)
+        if move_string(next_place[0],next_place[1],current_direction) in move_list:
+            if place not in loop_positions: loop_positions.append(place.copy())
+            break
+        if not is_inside(next_place[0],next_place[1]):
+            if pos_string(current_pos[0],current_pos[1]) not in new_places_of_guard: new_places_of_guard.add(pos_string(current_pos[0],current_pos[1]))
+            break
+        if map_to_check[next_place[1]][next_place[0]] == '#':
+            current_direction = change_direction(current_direction)
+        else:
+            if pos_string(current_pos[0],current_pos[1]) not in new_places_of_guard: new_places_of_guard.add(pos_string(current_pos[0],current_pos[1]))
+            current_pos[0] = next_place[0]
+            current_pos[1] = next_place[1]
+            move_list.add(move_string(current_pos[0],current_pos[1],current_direction))
+        
+
+print(len(loop_positions))
