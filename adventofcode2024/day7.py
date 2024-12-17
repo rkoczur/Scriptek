@@ -30,6 +30,7 @@ class Equation:
 
 raw_equations = []   
 
+#READ THE RAW DATA FROM THE TXT
 input_data = open('adventofcode2024/day7.txt', 'r')
 lines = input_data.readlines()
 for line in lines:
@@ -41,6 +42,7 @@ input_data.close()
 
 counter = 0
 
+#DO DA THING
 for eq in raw_equations:
     this_equation = Equation(eq[0],eq[1])
     if this_equation.can_be_true(): counter+=this_equation.get_result()
