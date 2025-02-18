@@ -9,9 +9,10 @@ def A60script(base_excel_file):
         #Class definition for easier data handling
         class Data_Unit:
 
-            def __init__(self,full_vat):
+            def __init__(self,full_vat,cust_field):
                 self.country_code = full_vat[:2]
                 self.vat = full_vat[2:]
+                self.cust_field = cust_field
                 self.amount = 0
             
             def add_amount(self, n):
@@ -21,9 +22,10 @@ def A60script(base_excel_file):
         def check_existing(current_unit, current_list):
             found = None
             country_code = current_unit.country_code
+            cust_field = current_unit.cust_field
             vat = current_unit.vat
             for i,unit in enumerate(current_list):
-                if unit.vat == vat and unit.country_code == country_code:
+                if unit.vat == vat and unit.country_code == country_code and unit.cust_field == cust_field:
                     found = i
                     break
             return found
@@ -66,8 +68,14 @@ def A60script(base_excel_file):
             tax_code = row['Ad']
             full_vat = row['Forgalmi adó-Id szám']
             amount = row['SP-összeg']/1000
+            cust_field = str()
+            
+            if tax_code == 'D2':
+                cust_field = 'C'
+            else:
+                cust_field = None
 
-            current_unit = Data_Unit(full_vat)
+            current_unit = Data_Unit(full_vat, cust_field)
             current_unit.add_amount(amount)
 
             if len(full_vat)<7:
@@ -77,12 +85,12 @@ def A60script(base_excel_file):
                 print(tax_code)
                 current_unit.amount = -1*current_unit.amount
                 page_01 = process_unit(current_unit,page_01)
-            elif tax_code in ['E0','EG','EH','EM','EJ']:
+            elif tax_code in ['E0','EG','EH','EM','EJ','D2']:
                 page_02 = process_unit(current_unit,page_02)
             elif tax_code == 'I8':
                 current_unit.amount = -current_unit.amount
                 page_03 = process_unit(current_unit,page_03)
-            elif tax_code == 'EN':
+            elif tax_code in ['EN','EP']:
                 page_04 = process_unit(current_unit,page_04)
             else:
                 continue
@@ -116,7 +124,7 @@ def A60script(base_excel_file):
 
         #Write IMP file
         final_file = open(final_imp_file, 'w+')
-        final_file.write('$ny_azon=24A60\n')
+        final_file.write('$ny_azon=25A60\n')
         final_file.write('$sorok_száma='+str(number_of_lines)+'\n')
         final_file.write('$d_lapok_száma='+str(number_of_pages)+'\n')
         final_file.write('$d_lap1='+d_lap4+'\n')
@@ -187,6 +195,8 @@ def A60script(base_excel_file):
             final_file.write(str(line_identifier)+"["+str(page_number)+"]="+str(row.country_code)+'\n')
             final_file.write(str(line_identifier+1)+"["+str(page_number)+"]="+str(row.vat)+'\n')
             final_file.write(str(line_identifier+2)+"["+str(page_number)+"]="+str("%.f" % row.amount)+'\n')
+            if row.cust_field == 'C':
+                final_file.write(str(line_identifier+3)+"["+str(page_number)+"]=C\n")
             line_identifier+=12
 
         #Page 03
@@ -220,4 +230,4 @@ def A60script(base_excel_file):
     except BaseException as e:
         return (str(e))
 
-print(A60script("C:\\temp\\SAP-A60-2024-05.xlsx"))
+print(A60script("C:\\temp\\SAP-A60-2025-01.xlsx"))

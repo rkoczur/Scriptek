@@ -83,6 +83,13 @@ def doKSHkiszallitas(base_excel_file):
                                         osszeg,
                                         adoszam])
 
+        # Convert float numbers to 2/0 decimals
+        for i in range(len(final_datas)):
+                final_datas[i][5] = "{0:.2f}".format(final_datas[i][5])
+                final_datas[i][6] = "{0:.0f}".format(final_datas[i][6])
+                final_datas[i][7] = "{0:.0f}".format(final_datas[i][7])
+                final_datas[i][8] = "{0:.0f}".format(final_datas[i][8])
+
         # Convert datas to strings in the array
         for i in range(len(final_datas)):
             for j in range(len(final_datas[i])):
@@ -98,11 +105,11 @@ def doKSHkiszallitas(base_excel_file):
         fejezet_counter = 1
         sor_counter = 1
 
-        final_file.write('{fejezet;sorrend};;;;;;;;;;;;;\n')
-        final_file.write('0;1;;;;;;;;;;;;;\n;;;;;;;;;;;;;;\n')
-        final_file.write('{MC01;M003_G;M003;MEV;MHO;JHNEV;JBEOSZTAS;JTELEFON;JEMAIL;KNEV;KBEOSZTAS;KTELEFON;KEMAIL;MEGJEGYZES;VGEA002}\n')
-        final_file.write('2010;14515239;14515239;'+ev+';'+honap+';Tótvári Tamás;Pénzügyi vezető;1/4515232;tamas.totvari@porscheinterauto.hu;Borók Judit;könyvelő;1/4515240;judit.borok@porscheinterauto.hu;;\n')
-        final_file.write(';;;;;;;;;;;;;;\n{fejezet;sorrend};;;;;;;;;;;;;\n1;1;;;;;;;;;;;;;\n;;;;;;;;;;;;;;\n')
+        final_file.write('{fejezet;sorrend}\n')
+        final_file.write('0;1\n\n')
+        final_file.write('{MC01;M003_G;M003;MEV;MHO;JHNEV;JBEOSZTAS;JTELEFON;JEMAIL;KNEV;KTELEFON;KEMAIL;MEGJEGYZES;VGEA002}\n')
+        final_file.write('2010;14515239;14515239;'+ev+';'+honap+';Tótvári Tamás;Pénzügyi vezető;1/4515232;tamas.totvari@porscheinterauto.hu;Borók Judit;1/4515240;judit.borok@porscheinterauto.hu;;\n')
+        final_file.write('\n{fejezet;sorrend}\n1;1\n\n')
         final_file.write('{T_SORSZ;TEKOD;UKOD;RTA;SZAORSZ;KGM;KIEGME;SZAOSSZ;STAERT;PADO};;;;;\n')
         for line in final_datas:
             if math.ceil(sor_counter/25) > fejezet_counter:
@@ -220,11 +227,11 @@ def doKSHbevetel(base_excel_file):
         sor_counter = 1
 
 
-        final_file.write('{fejezet;sorrend};;;;;;;;;;;;;\n')
-        final_file.write('0;1;;;;;;;;;;;;;\n;;;;;;;;;;;;;;\n')
-        final_file.write('{MC01;M003_G;M003;MEV;MHO;JHNEV;JBEOSZTAS;JTELEFON;JEMAIL;KNEV;KBEOSZTAS;KTELEFON;KEMAIL;MEGJEGYZES;VGEA002}\n')
-        final_file.write('2012;14515239;14515239;'+ev+';'+honap+';Tótvári Tamás;Pénzügyi vezető;1/4515232;tamas.totvari@porscheinterauto.hu;Borók Judit;könyvelő;1/4515240;judit.borok@porscheinterauto.hu;;\n')
-        final_file.write(';;;;;;;;;;;;;;\n{fejezet;sorrend};;;;;;;;;;;;;\n1;1;;;;;;;;;;;;;\n;;;;;;;;;;;;;;\n')
+        final_file.write('{fejezet;sorrend}\n')
+        final_file.write('0;1\n\n')
+        final_file.write('{MC01;M003_G;M003;MEV;MHO;JHNEV;JBEOSZTAS;JTELEFON;JEMAIL;KNEV;KTELEFON;KEMAIL;MEGJEGYZES;VGEA002}\n')
+        final_file.write('2012;14515239;14515239;'+ev+';'+honap+';Tótvári Tamás;Pénzügyi vezető;1/4515232;tamas.totvari@porscheinterauto.hu;Borók Judit;1/4515240;judit.borok@porscheinterauto.hu;;\n')
+        final_file.write('\n{fejezet;sorrend}\n1;1\n\n')
         final_file.write('{T_SORSZ;TEKOD;UKOD;FTA;SZAORSZ;KGM;KIEGME;SZAOSSZ;STAERT};;;;;;\n')
         for line in final_datas:
             if math.ceil(sor_counter/25) > fejezet_counter:
